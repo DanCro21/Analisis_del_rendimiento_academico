@@ -1,4 +1,6 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 #Cargar el dataset
 df = pd.read_csv('data/dataset.csv')
@@ -51,3 +53,38 @@ print(df.groupby('parental_level_of_education')['average_score'].mean().sort_val
 
 print("\nAnalisis 4: Rendimiento por grupos (Genero)")
 print(df.groupby('gender')[['math_score', 'reading_score', 'writing_score', 'average_score']].mean())
+
+#VISUALIZACIONES
+
+#Configurar un estilo visual general para las gráficas
+sns.set_theme(style="whitegrid")
+
+#Distribución de los Promedios Generales
+plt.figure(figsize=(10, 6))
+sns.histplot(df['average_score'], bins=20, kde=True, color='#2c3e50')
+plt.title('1. Distribución de los Promedios Académicos', fontsize=14)
+plt.xlabel('Promedio General')
+plt.ylabel('Cantidad de Estudiantes')
+plt.savefig('outputs/resultados/1_distribucion_promedios.png', bbox_inches='tight')
+plt.close() 
+
+#Impacto del Curso de Preparación
+plt.figure(figsize=(8, 6))
+sns.boxplot(data=df, x='test_preparation_course', y='average_score', palette='Set2')
+plt.title('2. Rendimiento vs. Curso de Preparación', fontsize=14)
+plt.xlabel('Curso de Preparación')
+plt.ylabel('Promedio General')
+plt.savefig('outputs/resultados/2_impacto_curso_preparacion.png', bbox_inches='tight')
+plt.close()
+
+#Nivel Educativo de los Padres
+plt.figure(figsize=(12, 6))
+orden = df.groupby('parental_level_of_education')['average_score'].mean().sort_values(ascending=False).index
+sns.barplot(data=df, x='parental_level_of_education', y='average_score', order=orden, palette='viridis')
+
+plt.title('3. Promedio según Nivel Educativo de los Padres', fontsize=14)
+plt.xlabel('Nivel Educativo de los Padres')
+plt.ylabel('Promedio General')
+plt.xticks(rotation=45) 
+plt.savefig('outputs/resultados/3_nivel_educativo_padres.png', bbox_inches='tight')
+plt.close()
